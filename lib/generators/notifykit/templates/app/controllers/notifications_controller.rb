@@ -38,14 +38,32 @@ class NotificationsController < ::ApplicationController
     respond_with_no_content
   end
 
+  def unsubscribe
+    notification.unsubscribe
+
+    # TODO you may want to improve the unsubscribe logic here
+    respond_to do |format|
+      format.json { head :no_content }
+      format.json { redirect_to root_url }
+    end
+  end
+
   def ignore
     notification.ignore
-    respond_with_no_content
+
+    respond_to do |format|
+      format.json { head :no_content }
+      format.json { redirect_to root_url }
+    end
   end
 
   def cancel
     notification.cancel
-    respond_with_no_content
+
+    respond_to do |format|
+      format.json { head :no_content }
+      format.json { redirect_to root_url }
+    end
   end
 
   protected
@@ -63,13 +81,13 @@ class NotificationsController < ::ApplicationController
     respond_to do |format|
       format.json { head :no_content }
       format.html {
-        data = "GIF89a\001\000\001\000\200\000\000\000\000\000\377\377\377!\371\004\001\000\000\000\000,\000\000\000\000\001\000\001\000\000\002\001D\000;"
-        send_data data, :filename => 'blank.gif', :type => 'image/gif', :disposition => 'inline'
+        send_data Notifykit.tracking_pixel, :filename => 'blank.gif', :type => 'image/gif', :disposition => 'inline'
       }
     end
   end
 
   def append_tracking_params(url)
+    return url if notification.do_not_track
     query = []
     query << request.query_string if request.query_string.present?
     query << "utm_campaign=#{utm_campaign}" unless params[:utm_campaign].present?

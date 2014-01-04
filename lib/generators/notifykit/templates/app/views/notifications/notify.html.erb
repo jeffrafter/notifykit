@@ -204,7 +204,9 @@
                   </tr>
                   <tr>
                     <td class="unsubscribe" align="center" style="text-align:center;font-size:11px;color:#999999">
+                      <% unless notification.transactional? -%><a href="<%= notification_unsubscribe_url(notification) %>">Unsubscribe</a><br><% end -%>
                       <a href="<%= append_tracking(privacy_url) %>">Privacy</a> and <a href="<%= append_tracking(terms_url) %>">Terms of service</a>.
+                      <% unless notification.do_not_track? -%><br><img border="0" height="1" width="1" src="<%= notification_read_url(notification, format: '.gif') %>"/><% end -%>
                     </td>
                   </tr>
                 </table>

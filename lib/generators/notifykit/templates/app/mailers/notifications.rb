@@ -1,13 +1,14 @@
-class NotificationsMailer < ActionMailer::Base
-  helper_method :notification, :append_tracking
+require 'action_mailer'
 
-  self.mailer_name = 'notifications'
+class Notifications < ActionMailer::Base
+  helper_method :notification, :append_tracking
 
   def notify(notification_id, to=nil)
     to = notification.email if to.blank?
 
     # Safety checks
     return abort_cancelled if notification.cancelled?
+    return abort_do_not_deliver if !notification.deliver_via_email?
     return abort_already_sent if notification.email_sent_at.present?
     return abort_no_recipient if to.blank?
     return abort_unsubscribed if unsubscribed?(to)
@@ -18,11 +19,11 @@ class NotificationsMailer < ActionMailer::Base
       from: notification.email_from,
       subject: notification.email_subject
     }
-    options[:reply_to] = notification.email_reply_to unless notification.email_reply_to.blank?
+    options[:reply_to] = notification.email_reply_to if notification.email_reply_to.present?
 
     message = mail(options) do |format|
-      format.html { render "#{mailer_name}/mailer" }
-      format.text { render "#{mailer_name}/mailer" }
+      format.html
+      format.text
     end
 
     # Storing the rendered template might be a bit aggressive if you are
@@ -44,13 +45,11 @@ class NotificationsMailer < ActionMailer::Base
   end
 
   def unsubscribed?(to)
-    # TODO Utilize unsubscribe logic here, possibly checking notification.kind or notification.user
-    false
+    # TODO You can implement logic to ensure that the user (or to email) is not unsubscribed
   end
 
   def whitelist_excluded?(to)
-    # TODO Utilize whitelist logic here to ensure you do not send business emails in development or test
-    false
+    # TODO You can implement logic to ensure that business emails are not sent in development or test environments
   end
 
   def abort_delivery(reason)
@@ -64,6 +63,10 @@ class NotificationsMailer < ActionMailer::Base
 
   def abort_cancelled
     abort_delivery("cancelled")
+  end
+
+  def abort_do_not_deliver
+    abort_delivery("do not deliver via email")
   end
 
   def abort_already_sent
@@ -82,7 +85,7 @@ class NotificationsMailer < ActionMailer::Base
     abort_delivery("recipient not on whitelist")
   end
 
-  # Return a URL that will track clicks and can be verified later
+  # Return a URL that tracks clicks and that can be verified
   def append_tracking(url)
     urls << url
     return url if notification.do_not_track?

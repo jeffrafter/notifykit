@@ -32,6 +32,11 @@ This will add some basic migrations for the user:
 
     create  db/migrate/20140102001051_create_notifications.rb
 
+## Creating notification templates and kinds
+
+* Create a Notification and call deliver
+* Create a NotificationsMailer descendant
+
 ## Testing
 
 The files generated using the installer include specs. To test these you should be
@@ -55,11 +60,12 @@ that more people were using them than not.
 
 ## TODO
 
-* stubs for tracking
-* stubs for domain handling
 * notification templates
 * subject/title templates
 * http://blog.mailgun.com/post/tips-tricks-avoiding-gmail-spam-filtering-when-using-ruby-on-rails-action-mailer/
+* redelivering
+* track spam
+* message receipts (envelopes/from/sender)
 
 ## Contributing
 

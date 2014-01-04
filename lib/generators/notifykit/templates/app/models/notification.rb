@@ -1,18 +1,13 @@
 class Notification < ActiveRecord::Base
-
-  # List your notification kinds here or pull them from the
-  # database (templates).
-  NOTIFICATION_KINDS = [
-    'welcome'
-  ]
-
   belongs_to :user
 
   scope :recent, -> { where('read_at IS NULL AND cancelled_at IS NULL').order('id DESC').limit(3) }
 
-  before_save :set_token
+  before_validation :set_email
+  before_validation :set_token
 
-  after_create :send_notification
+  validates :email, presence: true, if: :deliver_via_email?
+  validates :email_from, presence: true, if: :deliver_via_email?
 
   def click
     return false if self.cancelled?
@@ -43,11 +38,13 @@ class Notification < ActiveRecord::Base
     self.cancelled_at.present?
   end
 
-  def email
-    res = self.user.email rescue nil
-    res
+  def unsubscribe
+    self.unsubscribed_at ||= Time.now
+    self.save
   end
 
+  # Note: this is not the email_subject, this is the related resource
+  # for the notification, and for some kinds it may be empty.
   def subject
     return @subject if defined?(@subject)
     return if subject_type.blank? || subject_id.blank?
@@ -55,18 +52,24 @@ class Notification < ActiveRecord::Base
     @object = klass.find(subject_id) rescue nil
   end
 
+  def deliver
+    return if self.email_sent_at.present? || !self.deliver_via_email?
+
+    Notifier.notification(self.id).deliver
+  end
+
   protected
+
+  def set_email
+    return if !self.deliver_via_email?
+
+    self.email ||= self.user.email rescue nil
+  end
 
   # The default size is 16 which is 1/64^16, this is protected by
   # a unique index in the database to absolutely prevent collisions
   def set_token
     self.token ||= SecureRandom.urlsafe_base64(16)
-  end
-
-  def send_notification
-    return if self.email_sent_at.present?
-
-    Notifier.notification(self.id).deliver
   end
 end
 

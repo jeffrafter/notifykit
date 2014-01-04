@@ -1,4 +1,4 @@
-require 'action_mailer'
+require 'mail'
 
 module AbortableMailer
   class UndeliverableMailMessage < Mail::Message

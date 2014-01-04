@@ -9,4 +9,6 @@ Copyright <%= Time.now.year %> <%= company_name %>
 <%= company_address %>
 
 Privacy: <%= append_tracking(privacy_url) %>
-Terms of Service: <%= append_tracking(terms_url)
+Terms of Service: <%= append_tracking(terms_url) %>
+<% unless notification.transactional? -%>Unsubscribe: <%= notification_unsubscribe_url(notification) %><% end -%>
+

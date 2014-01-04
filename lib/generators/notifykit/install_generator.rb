@@ -15,8 +15,6 @@ module Notifykit
       generate_migration("create_notifications")
 
       # Ensure the destination structure
-      empty_directory "config"
-      empty_directory "initializers"
       empty_directory "app"
       empty_directory "app/models"
       empty_directory "app/mailers"
@@ -34,12 +32,29 @@ module Notifykit
       template "app/mailers/notifications_mailer.rb", "app/mailers/notifications_mailer.rb"
       template "app/helpers/notifications_helper.rb", "app/helpers/notifications_helper.rb"
       template "app/controllers/notifications_controller.rb", "app/controllers/notifications_controller.rb"
+      template "spec/factories/notification.rb", "spec/factories/notification.rb"
+      template "spec/models/notification_spec.rb", "spec/models/notification_spec.rb"
+      template "spec/helpers/notifications_helper_spec.rb", "spec/helpers/notifications_helper_spec.rb"
+      template "spec/mailers/notifications_mailer_spec.rb", "spec/mailers/notifications_mailer_spec.rb"
+      template "spec/controllers/notifications_controller_spec.rb", "spec/controllers/notifications_controller_spec.rb"
 
       # Don't treat these like templates
-      copy_file "app/views/notifications/mailer.html.erb", "app/views/notifications/mailer.html.erb"
-      copy_file "app/views/notifications/mailer.text.erb", "app/views/notifications/mailer.text.erb"
+      copy_file "app/views/notifications/notify.html.erb", "app/views/notifications/notify.html.erb"
+      copy_file "app/views/notifications/notify.text.erb", "app/views/notifications/notify.text.erb"
       copy_file "app/views/notifications/_welcome.html.erb", "app/views/notifications/_welcome.html.erb"
       copy_file "app/views/notifications/_welcome.text.erb", "app/views/notifications/_welcome.text.erb"
+
+      # Though many of these actions are not idempotent, you must be able to click them in an email
+      route "get   '/notifications/recent', to: 'notifications#recent', as: :notifications_recent"
+      route "get   '/notifications/:token', to: 'notifications#click', as: :notification_click"
+      route "get   '/notifications/:token/view', to: 'notifications#view', as: :notification_view"
+      route "get   '/notifications/:token/read', to: 'notifications#read', as: :notification_read"
+      route "get   '/notifications/:token/ignore', to: 'notifications#ignore', as: :notification_ignore"
+      route "get   '/notifications/:token/cancel', to: 'notifications#cancel', as: :notification_cancel"
+      route "get   '/notifications/:token/unsubscribe', to: 'notifications#unsubscribe', as: :notification_unsubscribe"
+
+      # Technically, we aren't inserting this at the end of the class, but the end of the RSpec::Configure
+      insert_at_end_of_class "spec/spec_helper.rb", "spec/spec_helper.rb"
 
       # RSpec needs to be in the development group to be used in generators
       gem_group :test, :development do
@@ -54,6 +69,20 @@ module Notifykit
     end
 
     protected
+
+    def insert_at_end_of_file(filename, source)
+      source = File.expand_path(find_in_source_paths(source.to_s))
+      context = instance_eval('binding')
+      content = ERB.new(::File.binread(source), nil, '-', '@output_buffer').result(context)
+      insert_into_file filename, "#{content}\n", before: /\z/
+    end
+
+    def insert_at_end_of_class(filename, source)
+      source = File.expand_path(find_in_source_paths(source.to_s))
+      context = instance_eval('binding')
+      content = ERB.new(::File.binread(source), nil, '-', '@output_buffer').result(context)
+      insert_into_file filename, "#{content}\n", before: /end\n*\z/
+    end
 
     def generate_migration(filename)
       if self.class.migration_exists?("db/migrate", "#{filename}")

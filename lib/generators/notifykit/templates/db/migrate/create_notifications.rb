@@ -7,6 +7,7 @@ class CreateNotifications < ActiveRecord::Migration
       t.string :category
       t.boolean :promotional, default: false
       t.boolean :transactional, default: true
+      t.boolean :do_not_track, default: false
       t.boolean :deliver_via_site, default: true
       t.boolean :deliver_via_email, default: true
       t.string :kind
@@ -18,9 +19,11 @@ class CreateNotifications < ActiveRecord::Migration
       t.datetime :clicked_at
       t.datetime :ignored_at
       t.datetime :cancelled_at
+      t.datetime :unsubscribed_at
       t.datetime :email_sent_at
       t.datetime :email_not_sent_at
       t.string :email_not_sent_reason
+      t.string :email
       t.string :email_reply_to
       t.string :email_from
       t.string :email_subject
@@ -35,10 +38,11 @@ class CreateNotifications < ActiveRecord::Migration
 
     add_index :notifications, :token, unique: true
     add_index :notifications, :created_at
-    add_index :notifications, [:id, :created_at, :read_at, :clicked_at, :ignored_at, :cancelled_at], named: 'recent'
+    add_index :notifications, [:id, :created_at, :read_at, :clicked_at, :ignored_at, :cancelled_at], name: 'recent'
     add_index :notifications, :kind
+    add_index :notifications, :category
     add_index :notifications, :user_id
-    add_index :notifications, [:subject_id, :subject_type], named: 'subject'
+    add_index :notifications, [:subject_id, :subject_type], name: 'subject'
   end
 
   def self.down
