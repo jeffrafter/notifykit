@@ -1,0 +1,12 @@
+<%= render partial: notification.kind %>
+
+`````````````````````````````````````````````````````````````````````````
+If you have any questions, please visit <%= append_tracking(help_url) %>
+
+This email contains graphics. To see them, click <%= notification_email_url(notification) %>.
+
+Copyright <%= Time.now.year %> <%= company_name %>
+<%= company_address %>
+
+Privacy: <%= append_tracking(privacy_url) %>
+Terms of Service: <%= append_tracking(terms_url)

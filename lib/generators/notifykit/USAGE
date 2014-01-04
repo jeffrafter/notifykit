@@ -1,0 +1,18 @@
+Usage:
+  rails generate notifykit [options]
+
+Runtime options:
+  -f, [--force]    # Overwrite files that already exist
+  -p, [--pretend]  # Run but do not make any changes
+  -s, [--skip]     # Skip files that already exist
+  -q, [--quiet]    # Supress status output
+
+Description:
+    Installs an notification system for your Rails application.
+
+Example:
+    rails generate notifykit:install
+
+    This will create:
+
+    ...

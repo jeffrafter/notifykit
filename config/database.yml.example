@@ -1,0 +1,19 @@
+# This file is not copied to or used by your Rails environment. The only time
+# these settings are used is when you have executed rake test:database while
+# running the tests for the notifykit gem (not from within Rails). This file makes
+# it easy to test alternate database drivers with notifykit. The
+# default testing environment uses the rails default (sqlite3).
+
+development:
+  adapter: mysql
+  database: notifykit_development
+  username: root
+  password:
+  host: localhost
+
+test:
+  adapter: mysql
+  database: notifykit_test
+  username: root
+  password:
+  host: localhost

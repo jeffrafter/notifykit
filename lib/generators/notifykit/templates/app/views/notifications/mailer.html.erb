@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title><%= @subject %></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width">
+    <meta name="format-detection" content="telephone=no">
+    <style type="text/css">
+    /* Client specific styles */
+    .ExternalClass { width:100%; }
+    .ExternalClass,
+    .ExternalClass p,
+    .ExternalClass span,
+    .ExternalClass font,
+    .ExternalClass td,
+    .ExternalClass div {
+      line-height: 100%;
+    }
+    body {
+      -webkit-text-size-adjust:100%;
+    }
+    body {
+      -ms-text-size-adjust:100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      color: #000000;
+      line-height: 100%;
+    }
+    #outlook a {
+      padding: 0;
+    }
+    img {
+      -ms-interpolation-mode:bicubic;
+    }
+    table{
+      mso-table-lspace:0pt;
+      mso-table-rspace:0pt;
+    }
+    table td {
+      border-collapse:collapse;
+    }
+    /* Template specific styles */
+    body {
+      margin:0;
+      padding:0;
+    }
+    p {
+      padding:0;
+      line-height:26px;
+    }
+    div.content {
+      padding: 0 40px 0 40px;
+    }
+    div.content p {
+      font-size: 16px;
+    }
+    a, a:link {
+      color:#000;
+      text-decoration: underline;
+      webkit-appearance: none;
+    }
+    a span {
+      font-weight: 300;
+      font-size:16px;
+    }
+    body, #body_style {
+      background:#F7F7F7;
+      color: #666666;
+      font-family: "HelveticaNeueLight", "HelveticaNeue-Light", "Helvetica Neue Light", "HelveticaNeue", "Helvetica Neue", sans-serif;
+      font-weight:300;
+      font-stretch:normal;
+      font-size:16px;
+      line-height: 20px;
+    }
+    li { margin-bottom: 4px; }
+    a:visited { color: #000000; text-decoration: none;}
+    a:focus   { color: #000000; text-decoration: underline;}
+    a:hover   { color: #000000; text-decoration: underline;}
+
+    a.button:visited { color: #fff; text-decoration: none;}
+    a.button:focus   { color: #fff; text-decoration: underline;}
+    a.button:hover   { color: #fff; text-decoration: underline;}
+    a.button {
+      text-align: center;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 0 20px;
+      height: 42px;
+      display: inline-block;
+      font-family:'HelveticaNeueBold','HelveticaNeue-Bold','Helvetica Neue Bold','HelveticaNeue','Helvetica Neue',sans-serif;
+      font-weight: 300;
+      font-size:12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none !important;
+      text-align: center;
+      line-height: 42px;
+      border: none;
+      border: 0;
+      background-color: #fe9d89;
+      -webkit-appearance: none;
+      box-sizing: border-box;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+      zoom: 1;
+    }
+
+    @media only screen and (max-width: 480px) {
+      body, #body_style {
+        font-size: 24px !important;
+        font-family: "HelveticaNeue", "Helvetica Neue", "HelveticaNeueRoman", "HelveticaNeue-Roman", "Helvetica Neue Roman", 'TeXGyreHerosRegular', "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+        font-weight:400;
+        font-stretch:normal;
+        line-height:32px;
+      }
+      table[class=table] {width:480px !important;}
+
+      /* footer */
+      table[class=footer_1] {width: 405px !important;}
+      td[class=footer_1] {font-size: 16px !important;line-height: 22px !important;}
+      td[class=footer_2] {font-size: 16px !important;line-height: 22px !important;}
+      td[class=unsubscribe] {font-size: 14px !important;}
+    }
+  </style>
+</head>
+<body style="background:#F7F7F7; color:#7F7F7F; font-size:14px" alink="#000000" link="#000000" bgcolor="#F7F7F7" text="#7F7F7F">
+  <div id="body_style">
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#F7F7F7">
+      <tr>
+        <td style="padding:0px 20px 20px 20px;">
+          <table class="table" width="600" cellspacing="0" cellpadding="0" border="0" align="center">
+            <tr>
+              <td align="center" style="border-bottom: 1px solid #FFFFFF;">
+                <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                  <tr>
+                    <td align="center" class="contains_graphics" style="border-bottom:1px solid #CCCCCC;font-size: 11px;color:#999999;text-align:center;padding:10px 0px;" valign="middle">
+                      <span>This email contains graphics. If you don’t see them,</span> <a href="<%= notification_email_url(notification) %>">click here</a>.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                  <tr>
+                    <td align="center">
+                      <table cellspacing="0" cellpadding="0" border="0" align="center">
+                        <tr>
+                          <td align="center">
+                            <a href="<%= append_tracking(root_url) %>">
+                              <%= company_name %>
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td class="bar" width="100%" height="0" style="border-bottom:4px solid #666666;">
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF">
+                  <tr>
+                    <td style="border: 1px solid #CCCCCC; border-top: none; border-bottom: none; padding: 40px 0px;" class="wrapper_td">
+                      <%= render partial: notification.kind %>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #CCCCCC;">
+                <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF" align="center">
+                  <tr>
+                    <td align="center">
+                      <table class="footer_1" width="460" cellspacing="0" cellpadding="0" border"0" bgcolor="#FFFFFF" align="center">
+                        <tr>
+                          <td class="footer_1" style="text-align:center;line-height:14px;font-size:11px;padding:22px;" align="center">
+                            If you have any questions, please visit our
+                            <a href="<%= append_tracking(help_url) %>" style="color:#000000;">support page</a>.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td align="center">
+                <table class="footer2" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+                  <tr>
+                    <td class="footer_2" align="center" style="text-align:center;padding-bottom:20px;font-size:11px;line-height:14px;padding-top:20px;">
+                      Copyright <%= Time.now.year %>  <%= company_name %><br>
+                      <%= company_address %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="unsubscribe" align="center" style="text-align:center;font-size:11px;color:#999999">
+                      <a href="<%= append_tracking(privacy_url) %>">Privacy</a> and <a href="<%= append_tracking(terms_url) %>">Terms of service</a>.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>
