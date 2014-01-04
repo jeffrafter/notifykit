@@ -4,7 +4,7 @@ describe Notification do
 
   let(:notification) { build(:notification) }
 
-  it { should_belong_to(:user) }
+  it { should belong_to(:user) }
 
   describe "recent" do
     it "finds recent notifications"

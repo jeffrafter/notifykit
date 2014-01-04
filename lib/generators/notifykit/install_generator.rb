@@ -29,13 +29,13 @@ module Notifykit
 
       # Fill out some templates (for now, this is just straight copy)
       template "app/models/notification.rb", "app/models/notification.rb"
-      template "app/mailers/notifications_mailer.rb", "app/mailers/notifications_mailer.rb"
+      template "app/mailers/notifications.rb", "app/mailers/notifications.rb"
       template "app/helpers/notifications_helper.rb", "app/helpers/notifications_helper.rb"
       template "app/controllers/notifications_controller.rb", "app/controllers/notifications_controller.rb"
       template "spec/factories/notification.rb", "spec/factories/notification.rb"
       template "spec/models/notification_spec.rb", "spec/models/notification_spec.rb"
       template "spec/helpers/notifications_helper_spec.rb", "spec/helpers/notifications_helper_spec.rb"
-      template "spec/mailers/notifications_mailer_spec.rb", "spec/mailers/notifications_mailer_spec.rb"
+      template "spec/mailers/notifications_spec.rb", "spec/mailers/notifications_spec.rb"
       template "spec/controllers/notifications_controller_spec.rb", "spec/controllers/notifications_controller_spec.rb"
 
       # Don't treat these like templates
