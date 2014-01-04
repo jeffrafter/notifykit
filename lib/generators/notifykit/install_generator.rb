@@ -19,6 +19,9 @@ module Notifykit
       empty_directory "initializers"
       empty_directory "app"
       empty_directory "app/models"
+      empty_directory "app/mailers"
+      empty_directory "app/helpers"
+      empty_directory "app/controllers"
       empty_directory "app/views"
       empty_directory "app/views/notifications"
       empty_directory "spec"
@@ -29,6 +32,7 @@ module Notifykit
       # Fill out some templates (for now, this is just straight copy)
       template "app/models/notification.rb", "app/models/notification.rb"
       template "app/mailers/notifications_mailer.rb", "app/mailers/notifications_mailer.rb"
+      template "app/helpers/notifications_helper.rb", "app/helpers/notifications_helper.rb"
       template "app/controllers/notifications_controller.rb", "app/controllers/notifications_controller.rb"
 
       # Don't treat these like templates

@@ -59,11 +59,6 @@ class NotificationsController < ::ApplicationController
     @notification = current_user.notifications.where(token: params[:token]).first || raise(ActiveRecord::RecordNotFound)
   end
 
-  def recent_notifications
-    return @recent_notifications if defined?(@recent_notifications)
-    @recent_notifications = current_user.notifications.recent.all
-  end
-
   def respond_with_no_content
     respond_to do |format|
       format.json { head :no_content }

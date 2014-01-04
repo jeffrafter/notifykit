@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Notifykit::VERSION
   spec.authors       = ["Jeff Rafter"]
   spec.email         = ["jeffrafter@gmail.com"]
-  spec.description   = %q{Notification for your Rails application}
-  spec.summary       = %q{Notification for your Rails application}
+  spec.description   = %q{A notification system for your Rails app}
+  spec.summary       = %q{Notifykit is a generator that will install a notifications model, mailer, controller and views. It allows tracking clicks, reads and unsubscribing}
   spec.homepage      = "https://github.com/jeffrafter/notifykit"
   spec.license       = "MIT"
 

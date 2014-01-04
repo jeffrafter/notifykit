@@ -13,9 +13,14 @@ class NotificationsMailer < ActionMailer::Base
     return abort_unsubscribed if unsubscribed?(to)
     return abort_whitelist_excluded if white_list_exlcuded?(to)
 
-    message = mail(:to => to,
-         :from => notification.from,
-         :subject => notification.title) do |format|
+    options = {
+      to: to,
+      from: notification.email_from,
+      subject: notification.email_subject
+    }
+    options[:reply_to] = notification.email_reply_to unless notification.email_reply_to.blank?
+
+    message = mail(options) do |format|
       format.html { render "#{mailer_name}/mailer" }
       format.text { render "#{mailer_name}/mailer" }
     end
@@ -36,14 +41,6 @@ class NotificationsMailer < ActionMailer::Base
   def notification
     return @notification if defined?(@notification)
     @notification = Notification.find(notification_id)
-  end
-
-  def company_name
-    # TODO According to CANSPAM you must include company contact information
-  end
-
-  def company_address
-    # TODO According to CANSPAM you must include company contact information
   end
 
   def unsubscribed?(to)
@@ -85,7 +82,7 @@ class NotificationsMailer < ActionMailer::Base
     abort_delivery("recipient not on whitelist")
   end
 
-  # Return a clickable url that can be verified later
+  # Return a URL that will track clicks and can be verified later
   def append_tracking(url)
     urls << url
     notification_url(notification, r: url)

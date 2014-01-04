@@ -10,7 +10,7 @@ class Notification < ActiveRecord::Base
 
   scope :recent, -> { where('read_at IS NULL AND cancelled_at IS NULL').order('id DESC').limit(3) }
 
-  before_validation :set_token
+  before_save :set_token
 
   after_create :send_notification
 
@@ -57,7 +57,10 @@ class Notification < ActiveRecord::Base
 
   protected
 
+  # The default size is 16 which is 1/64^16, this is protected by
+  # a unique index in the database to absolutely prevent collisions
   def set_token
+    self.token ||= SecureRandom.urlsafe_base64(16)
   end
 
   def send_notification
