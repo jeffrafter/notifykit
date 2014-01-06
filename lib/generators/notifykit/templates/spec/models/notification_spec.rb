@@ -7,9 +7,22 @@ describe Notification do
   it { should belong_to(:user) }
 
   describe "recent" do
-    it "finds recent notifications"
-    it "does not find read notifications"
-    it "does not find cancelled notifications"
+    it "finds recent notifications" do
+      4.times { create(:notification) }
+      Notification.recent.count.should == 3
+    end
+
+    it "does not find read notifications" do
+      notification.save
+      create(:notification, read_at: Time.now)
+      Notification.recent.all.should == [notification]
+    end
+
+    it "does not find cancelled notifications" do
+      notification.save
+      create(:notification, cancelled_at: Time.now)
+      Notification.recent.all.should == [notification]
+    end
   end
 
   describe "validations" do
