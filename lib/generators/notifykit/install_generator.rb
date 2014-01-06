@@ -53,6 +53,9 @@ module Notifykit
       route "get   '/notifications/:token/cancel', to: 'notifications#cancel', as: :notification_cancel"
       route "get   '/notifications/:token/unsubscribe', to: 'notifications#unsubscribe', as: :notification_unsubscribe"
 
+      # Adjust the user
+      inject_into_class "app/models/user.rb", User, "has_many :notifications\n"
+
       # Technically, we aren't inserting this at the end of the class, but the end of the RSpec::Configure
       insert_at_end_of_class "spec/spec_helper.rb", "spec/spec_helper.rb"
 

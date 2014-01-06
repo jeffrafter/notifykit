@@ -2,13 +2,15 @@ class NotificationsController < ::ApplicationController
   before_filter :require_login
   before_filter :require_notification
 
+  include NotificationsHelper
+
   helper_method :notification
 
   layout false
 
   def recent
     respond_to do |format|
-      format.json { render recent_notifications.to_json }
+      format.json { render json: recent_notifications.to_json }
     end
   end
 
@@ -25,7 +27,7 @@ class NotificationsController < ::ApplicationController
     # To prevent a bare redirect, validate that the redirect url
     # was generated when the email was sent
     target_url = params[:r]
-    target_url = root_url unless notification.email_urls.split("\n").index(target_url)
+    target_url = root_url if notification.email_urls.blank? || !notification.email_urls.split("\n").index(target_url)
 
     respond_to do |format|
       format.json { head :no_content }
@@ -44,7 +46,7 @@ class NotificationsController < ::ApplicationController
     # TODO you may want to improve the unsubscribe logic here
     respond_to do |format|
       format.json { head :no_content }
-      format.json { redirect_to root_url }
+      format.html { redirect_to root_url }
     end
   end
 
@@ -53,7 +55,7 @@ class NotificationsController < ::ApplicationController
 
     respond_to do |format|
       format.json { head :no_content }
-      format.json { redirect_to root_url }
+      format.html { redirect_to root_url }
     end
   end
 
@@ -62,7 +64,7 @@ class NotificationsController < ::ApplicationController
 
     respond_to do |format|
       format.json { head :no_content }
-      format.json { redirect_to root_url }
+      format.html { redirect_to root_url }
     end
   end
 
@@ -89,10 +91,9 @@ class NotificationsController < ::ApplicationController
   def append_tracking_params(url)
     return url if notification.do_not_track
     query = []
-    query << request.query_string if request.query_string.present?
-    query << "utm_campaign=#{utm_campaign}" unless params[:utm_campaign].present?
-    query << "utm_medium=#{utm_medium}" unless params[:utm_medium].present?
-    query << "utm_source=#{utm_source}" unless params[:utm_source].present? || utm_source.blank?
+    query << "utm_campaign=#{utm_campaign}" unless url =~ /utm_campaign/
+    query << "utm_medium=#{utm_medium}" unless url =~ /utm_medium/
+    query << "utm_source=#{utm_source}" unless url =~ /utm_source/ || utm_source.blank?
     url += (url =~ /\?/) ? "&" : "?"
     url += query.join('&')
   end
