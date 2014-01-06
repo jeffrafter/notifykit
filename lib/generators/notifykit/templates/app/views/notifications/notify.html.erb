@@ -135,7 +135,7 @@
                 <table width="100%" cellspacing="0" cellpadding="0" border="0">
                   <tr>
                     <td align="center" class="contains_graphics" style="border-bottom:1px solid #CCCCCC;font-size: 11px;color:#999999;text-align:center;padding:10px 0px;" valign="middle">
-                      <span>This email contains graphics. If you don’t see them,</span> <a href="<%= notification_email_url(notification) %>">click here</a>.
+                      <span>This email contains graphics. If you don’t see them,</span> <a href="<%= notification_view_url(notification) %>">click here</a>.
                     </td>
                   </tr>
                 </table>
@@ -150,7 +150,7 @@
                         <tr>
                           <td align="center">
                             <a href="<%= append_tracking(root_url) %>">
-                              <%= company_name %>
+                              <%= notification_company_name %>
                             </a>
                           </td>
                         </tr>
@@ -198,8 +198,8 @@
                 <table class="footer2" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                   <tr>
                     <td class="footer_2" align="center" style="text-align:center;padding-bottom:20px;font-size:11px;line-height:14px;padding-top:20px;">
-                      Copyright <%= Time.now.year %>  <%= company_name %><br>
-                      <%= company_address %>
+                      Copyright <%= Time.now.year %>  <%= notification_company_name %><br>
+                      <%= notification_company_address %>
                     </td>
                   </tr>
                   <tr>

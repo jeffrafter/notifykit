@@ -14,7 +14,7 @@ class CreateNotifications < ActiveRecord::Migration
       t.string :token
       t.integer :user_id
       t.integer :subject_id
-      t.integer :subject_type
+      t.string :subject_type
       t.datetime :read_at
       t.datetime :clicked_at
       t.datetime :ignored_at

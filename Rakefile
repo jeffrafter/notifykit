@@ -43,11 +43,9 @@ namespace :generator do
     system "cd spec/tmp/sample && rails g rspec:install"
 
     # Open up the root route for specs
-    sed("s/# root/root/", "spec/tmp/sample/config/routes.rb")
-
     # Make a thing and a user
     system "cd spec/tmp/sample && rails g scaffold thing name:string mood:string"
-    system "cd spec/tmp/sample && rails g scaffold user display_name:string email:string"
+    system "cd spec/tmp/sample && rails g scaffold user display_name:string first_name:string email:string"
   end
 
   # This task is not used unless you need to test the generator with an alternate database
@@ -61,7 +59,7 @@ namespace :generator do
 
   desc "Run the #{gem_name} generator"
   task gem_name do
-    system "cd spec/tmp/sample && rails g #{gem_name}:install --force && rake db:migrate db:test:prepare"
+    system "cd spec/tmp/sample && rails g #{gem_name}:install --force --test_mode && rake db:migrate db:test:prepare"
   end
 
 end

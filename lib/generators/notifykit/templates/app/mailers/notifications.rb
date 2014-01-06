@@ -4,6 +4,9 @@ class Notifications < ActionMailer::Base
   helper_method :notification, :append_tracking
 
   def notify(notification_id, to=nil)
+    # Ensure that the notification exists
+    self.notification(notification_id)
+
     to = notification.email if to.blank?
 
     # Safety checks
@@ -12,7 +15,7 @@ class Notifications < ActionMailer::Base
     return abort_already_sent if notification.email_sent_at.present?
     return abort_no_recipient if to.blank?
     return abort_unsubscribed if unsubscribed?(to)
-    return abort_whitelist_excluded if white_list_exlcuded?(to)
+    return abort_whitelist_excluded if whitelist_excluded?(to)
 
     options = {
       to: to,
@@ -28,10 +31,10 @@ class Notifications < ActionMailer::Base
 
     # Storing the rendered template might be a bit aggressive if you are
     # sending large batches of emails.
-    notification.email_html = message.html_part
-    notification.email_text = message.text_part
+    notification.email_html = message.html_part.body.to_s
+    notification.email_text = message.text_part.body.to_s
     notification.email_sent_at = Time.now
-    notification.urls = urls.join("\n")
+    notification.email_urls = urls.join("\n")
     notification.save
 
     message
@@ -39,9 +42,10 @@ class Notifications < ActionMailer::Base
 
   protected
 
-  def notification
+  def notification(notification_id=nil)
     return @notification if defined?(@notification)
-    @notification = Notification.find(notification_id)
+    @notification = Notification.find(notification_id) if notification_id.present?
+    @notification || raise(ActiveRecord::RecordNotFound)
   end
 
   def unsubscribed?(to)

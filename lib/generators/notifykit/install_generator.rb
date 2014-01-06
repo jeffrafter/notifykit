@@ -5,6 +5,8 @@ module Notifykit
   class InstallGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
 
+    class_option :test_mode, type: :boolean, default: false, description: "Run the generator in test mode"
+
     desc "A notification system for your Rails app"
 
     def self.source_root
@@ -52,6 +54,13 @@ module Notifykit
       route "get   '/notifications/:token/ignore', to: 'notifications#ignore', as: :notification_ignore"
       route "get   '/notifications/:token/cancel', to: 'notifications#cancel', as: :notification_cancel"
       route "get   '/notifications/:token/unsubscribe', to: 'notifications#unsubscribe', as: :notification_unsubscribe"
+
+      if options.test_mode?
+        route "root   'welcome#index'"
+        route "get    '/help', to: 'help#index', as: :help"
+        route "get    '/privacy', to: 'privacy#index', as: :privacy"
+        route "get    '/terms', to: 'terms#index', as: :terms"
+      end
 
       # Adjust the user
       inject_into_class "app/models/user.rb", User, "has_many :notifications\n"

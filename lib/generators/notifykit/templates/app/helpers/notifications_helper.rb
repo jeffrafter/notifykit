@@ -9,6 +9,6 @@ module NotificationsHelper
 
   def recent_notifications
     return @recent_notifications if defined?(@recent_notifications)
-    @recent_notifications = current_user && current_user.notifications.recent.all
+    @recent_notifications = current_user && current_user.notifications.recent
   end
 end

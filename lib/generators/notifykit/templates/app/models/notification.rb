@@ -8,6 +8,7 @@ class Notification < ActiveRecord::Base
 
   validates :email, presence: true, if: :deliver_via_email?
   validates :email_from, presence: true, if: :deliver_via_email?
+  validates :email_subject, presence: true, if: :deliver_via_email?
 
   def click
     return false if self.cancelled?
@@ -31,7 +32,7 @@ class Notification < ActiveRecord::Base
 
   def cancel
     return true if self.cancelled_at.present?
-    self.update_attribute(:cancelled, Time.now)
+    self.update_attribute(:cancelled_at, Time.now)
   end
 
   def cancelled?
@@ -55,7 +56,7 @@ class Notification < ActiveRecord::Base
   def deliver
     return if self.email_sent_at.present? || !self.deliver_via_email?
 
-    Notifier.notification(self.id).deliver
+    Notifications.notify(self.id).deliver
   end
 
   protected
