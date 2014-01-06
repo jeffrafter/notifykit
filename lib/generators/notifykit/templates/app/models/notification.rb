@@ -59,6 +59,10 @@ class Notification < ActiveRecord::Base
     Notifications.notify(self.id).deliver
   end
 
+  def to_param
+    self.token
+  end
+
   protected
 
   def set_email

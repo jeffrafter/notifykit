@@ -6,6 +6,11 @@ describe Notification do
 
   it { should belong_to(:user) }
 
+  it "should use the token as the param" do
+    notification.save
+    notification.to_param.should == notification.token
+  end
+
   describe "recent" do
     it "finds recent notifications" do
       4.times { create(:notification) }

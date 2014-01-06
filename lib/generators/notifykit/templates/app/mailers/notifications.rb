@@ -1,6 +1,6 @@
 require 'action_mailer'
 
-class Notifications < ActionMailer::Base
+class Notifications < AbortableMailer::Base
   helper_method :notification, :append_tracking
 
   def notify(notification_id, to=nil)

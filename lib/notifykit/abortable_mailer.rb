@@ -23,7 +23,7 @@ module AbortableMailer
       begin
         super(*args)
       rescue AbortDeliveryError
-        self.message = AbortableMailer::UndeliverableMailMessage
+        self.message = AbortableMailer::UndeliverableMailMessage.new
       end
     end
   end
