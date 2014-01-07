@@ -23,7 +23,6 @@ module Notifykit
       empty_directory "app/helpers"
       empty_directory "app/controllers"
       empty_directory "app/views"
-      empty_directory "app/views/notifications"
       empty_directory "app/views/notifications_mailer"
       empty_directory "spec"
       empty_directory "spec/models"

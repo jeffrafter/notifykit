@@ -158,8 +158,8 @@ have been left for this functionality and tracking for these features
 is included. In the `NotificationsMailer` class there are two methods that
 you will need to implement if you want this functionality:
 
-* unsubscribed?
-* white_list_excluded?
+* `unsubscribed?`
+* `white_list_excluded?`
 
 And in the `NotificationsController` there is an action defined for
 handling unsubscribe requests.
@@ -196,8 +196,8 @@ Tracking:
 * `ignored_at` - when the notification was marked as ignored
 * `cancelled_at` - when the notification was cancelled
 * `unsubscribed_at` - if the notification generated an unsubscribe request, this flag is set
-* `click_count - how many clicks have occurred for this notification
-* `read_count - how many times this notification has been read
+* `click_count` - how many clicks have occurred for this notification
+* `read_count` - how many times this notification has been read
 
 Email specific fields:
 
@@ -210,7 +210,7 @@ Email specific fields:
 * `email_reply_to` - the reply to field for the email
 * `email_from` - the from field for the email
 * `email_subject` - the subject field for the email (this is not the notification subject)
-* `email_urls` - any urls for which tracking is added are recorded to protect against malicious redirects
+* `email_urls` - any URLs for which tracking is added are recorded to protect against malicious redirects
 * `email_text` - the rendered text of the email
 * `email_html` - the rendered HTML of the email
 

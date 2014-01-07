@@ -1,7 +1,8 @@
 class Notification < ActiveRecord::Base
   belongs_to :user
+  belongs_to :subject, polymorphic: true
 
-  scope :recent, -> { where('read_at IS NULL AND cancelled_at IS NULL').order('id DESC').limit(3) }
+  scope :recent, -> { where('read_at IS NULL AND ignored_at IS NULL AND cancelled_at IS NULL').order('id DESC').limit(3) }
 
   before_validation :set_email
   before_validation :set_token
@@ -42,15 +43,6 @@ class Notification < ActiveRecord::Base
   def unsubscribe
     self.unsubscribed_at ||= Time.now
     self.save
-  end
-
-  # Note: this is not the email_subject, this is the related resource
-  # for the notification, and for some kinds it may be empty.
-  def subject
-    return @subject if defined?(@subject)
-    return if subject_type.blank? || subject_id.blank?
-    klass = self.subject_type.constantize
-    @object = klass.find(subject_id) rescue nil
   end
 
   def deliver
