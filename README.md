@@ -155,7 +155,7 @@ You can just use your company name here or leave it blank.
 
 Currently, the unsubscribe and whitelisting logic is empty. Placeholders
 have been left for this functionality and tracking for these features
-is included. In the `Notifications` mailer there are two methods that
+is included. In the `NotificationsMailer` class there are two methods that
 you will need to implement if you want this functionality:
 
 * unsubscribed?
@@ -269,7 +269,7 @@ To send a notification you simply create a new record and call deliver:
       kind: "welcome").deliver
 
 This will generate a new record in the notifications table, then use
-the Notifications mailer to deliver the message. It assumes that you
+the `NotificationsMailer` to deliver the message. It assumes that you
 have `_welcome.html.erb` and `_welcome.text.erb` templates in the
 `app/views/notifications` folder. The name of the partial corresponds
 to the email kind.
@@ -282,7 +282,7 @@ mailer needs to do a lot of work to build the email.
 
 For example, you could build a `WelcomeMailer`:
 
-    class WelcomeMailer < Notifications
+    class WelcomeMailer < NotificationsMailer
       def notify(user_id)
         user = User.find(user_id)
 
@@ -298,7 +298,7 @@ For example, you could build a `WelcomeMailer`:
       end
     end
 
-The mailer descends from the Notifications mailer giving you access to
+The mailer descends from the `NotificationsMailer` giving you access to
 the notify method. You can override the method to add your own
 behavior (in this case creating a notification as part of the mail
 generation) and then call `super`. Notice that we set `@notification`
@@ -306,7 +306,7 @@ instance variable and called `super` with `nil`. This saves a database
 lookup by `id`.
 
 When Rails searches for templates it will search first in the
-`app/views/welcome_mailer` folder and then in the `app/views/notifications`
+`app/views/welcome_mailer` folder and then in the `app/views/notifications_mailer`
 folder. Because of this you can create a specific template by adding
 new `notify.html.erb` and `notify.text.erb` to your mailer specific
 view folder.
@@ -317,7 +317,7 @@ You may not want to use the method or template name "notify". You can
 customize the mailer even further and use your own template name. For
 example:
 
-    class WelcomeMailer < Notifications
+    class WelcomeMailer < NotificationsMailer
       def welcome(user_id)
         user = User.find(user_id)
 
@@ -342,7 +342,7 @@ Within your `welcome.html.erb` you can do whatever you like. If you
 want to leverage the existing template you can even call render
 directly:
 
-    <%= render template: "notifications/notify" %>
+    <%= render template: "notifications_mailer/notify" %>
 
 ## Testing
 

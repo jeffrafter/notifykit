@@ -165,13 +165,13 @@ describe Notification do
     end
 
     it "should not deliver if it has already been delivered" do
-      Notifications.should_not_receive(:notify)
+      NotificationsMailer.should_not_receive(:notify)
       notification.email_sent_at = Time.now
       notification.deliver
     end
 
     it "should not deliver unless it is delivering via email" do
-      Notifications.should_not_receive(:notify)
+      NotificationsMailer.should_not_receive(:notify)
       notification.deliver_via_email = false
       notification.deliver
     end

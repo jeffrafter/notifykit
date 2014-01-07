@@ -1,9 +1,9 @@
 require "spec_helper"
 
-describe Notifications do
+describe NotificationsMailer do
   describe "notify" do
     let(:notification) { create(:notification) }
-    let(:mail) { Notifications.notify(notification.id) }
+    let(:mail) { NotificationsMailer.notify(notification.id) }
 
     before(:each) do
       Rails.application.default_url_options[:host] = "http://example.com"
@@ -25,18 +25,18 @@ describe Notifications do
 
     it "finds the notification" do
       new_notification = create(:notification)
-      new_mail = Notifications.notify(new_notification.id)
+      new_mail = NotificationsMailer.notify(new_notification.id)
       new_mail.body.encoded.should match(new_notification.token)
     end
 
     it "delivers to the to address" do
-      new_mail = Notifications.notify(notification.id, "another@example.com")
+      new_mail = NotificationsMailer.notify(notification.id, "another@example.com")
       new_mail.to.should == ["another@example.com"]
     end
 
     describe "aborts" do
       before(:each) do
-        Notifications.any_instance.stub(:notification).and_return(notification)
+        NotificationsMailer.any_instance.stub(:notification).and_return(notification)
       end
 
       it "aborts the delivery" do
@@ -49,37 +49,37 @@ describe Notifications do
 
       it "aborts if the notification is cancelled" do
         notification.cancelled_at = Time.now
-        Notifications.any_instance.should_receive(:abort_cancelled)
+        NotificationsMailer.any_instance.should_receive(:abort_cancelled)
         mail
       end
 
       it "aborts if the notification should not be delivered" do
         notification.deliver_via_email = false
-        Notifications.any_instance.should_receive(:abort_do_not_deliver)
+        NotificationsMailer.any_instance.should_receive(:abort_do_not_deliver)
         mail
       end
 
       it "aborts if the notification is already sent" do
         notification.email_sent_at = Time.now
-        Notifications.any_instance.should_receive(:abort_already_sent)
+        NotificationsMailer.any_instance.should_receive(:abort_already_sent)
         mail
       end
 
       it "aborts if the notification there is no recipient" do
         notification.email = nil
-        Notifications.any_instance.should_receive(:abort_no_recipient)
+        NotificationsMailer.any_instance.should_receive(:abort_no_recipient)
         mail
       end
 
       it "aborts if the notification if the user is unsubscribed" do
-        Notifications.any_instance.stub(:unsubscribed?).and_return(true)
-        Notifications.any_instance.should_receive(:abort_unsubscribed)
+        NotificationsMailer.any_instance.stub(:unsubscribed?).and_return(true)
+        NotificationsMailer.any_instance.should_receive(:abort_unsubscribed)
         mail
       end
 
       it "aborts if the notification if the user is not whitelisted" do
-        Notifications.any_instance.stub(:whitelist_excluded?).and_return(true)
-        Notifications.any_instance.should_receive(:abort_whitelist_excluded)
+        NotificationsMailer.any_instance.stub(:whitelist_excluded?).and_return(true)
+        NotificationsMailer.any_instance.should_receive(:abort_whitelist_excluded)
         mail
       end
     end
@@ -108,7 +108,7 @@ describe Notifications do
 
     describe "tracking" do
       before(:each) do
-        Notifications.any_instance.stub(:notification).and_return(notification)
+        NotificationsMailer.any_instance.stub(:notification).and_return(notification)
       end
 
       it "appends tracking" do

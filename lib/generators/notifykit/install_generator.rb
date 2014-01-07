@@ -24,6 +24,7 @@ module Notifykit
       empty_directory "app/controllers"
       empty_directory "app/views"
       empty_directory "app/views/notifications"
+      empty_directory "app/views/notifications_mailer"
       empty_directory "spec"
       empty_directory "spec/models"
       empty_directory "spec/controllers"
@@ -31,20 +32,20 @@ module Notifykit
 
       # Fill out some templates (for now, this is just straight copy)
       template "app/models/notification.rb", "app/models/notification.rb"
-      template "app/mailers/notifications.rb", "app/mailers/notifications.rb"
+      template "app/mailers/notifications_mailer.rb", "app/mailers/notifications_mailer.rb"
       template "app/helpers/notifications_helper.rb", "app/helpers/notifications_helper.rb"
       template "app/controllers/notifications_controller.rb", "app/controllers/notifications_controller.rb"
       template "spec/factories/notification.rb", "spec/factories/notification.rb"
       template "spec/models/notification_spec.rb", "spec/models/notification_spec.rb"
       template "spec/helpers/notifications_helper_spec.rb", "spec/helpers/notifications_helper_spec.rb"
-      template "spec/mailers/notifications_spec.rb", "spec/mailers/notifications_spec.rb"
+      template "spec/mailers/notifications_mailer_spec.rb", "spec/mailers/notifications_mailer_spec.rb"
       template "spec/controllers/notifications_controller_spec.rb", "spec/controllers/notifications_controller_spec.rb"
 
       # Don't treat these like templates
-      copy_file "app/views/notifications/notify.html.erb", "app/views/notifications/notify.html.erb"
-      copy_file "app/views/notifications/notify.text.erb", "app/views/notifications/notify.text.erb"
-      copy_file "app/views/notifications/_welcome.html.erb", "app/views/notifications/_welcome.html.erb"
-      copy_file "app/views/notifications/_welcome.text.erb", "app/views/notifications/_welcome.text.erb"
+      copy_file "app/views/notifications_mailer/notify.html.erb", "app/views/notifications_mailer/notify.html.erb"
+      copy_file "app/views/notifications_mailer/notify.text.erb", "app/views/notifications_mailer/notify.text.erb"
+      copy_file "app/views/notifications_mailer/_welcome.html.erb", "app/views/notifications_mailer/_welcome.html.erb"
+      copy_file "app/views/notifications_mailer/_welcome.text.erb", "app/views/notifications_mailer/_welcome.text.erb"
 
       # Though many of these actions are not idempotent, you must be able to click them in an email
       route "get   '/notifications/recent', to: 'notifications#recent', as: :notifications_recent"
