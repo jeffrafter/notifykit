@@ -41,7 +41,8 @@ describe Notifications do
 
       it "aborts the delivery" do
         notification.cancelled_at = Time.now
-        mail.class.should == AbortableMailer::UndeliverableMailMessage
+        mail.class.should == ActionMailer::Base::NullMail
+        mail.deliver
         notification.reload
         notification.email_not_sent_at.should_not be_nil
       end
@@ -52,11 +53,35 @@ describe Notifications do
         mail
       end
 
-      it "aborts if the notification should not be delivered"
-      it "aborts if the notification is already sent"
-      it "aborts if the notification there is no recipient"
-      it "aborts if the notification if the user is unsubscribed"
-      it "aborts if the notification if the user is not whitelisted"
+      it "aborts if the notification should not be delivered" do
+        notification.deliver_via_email = false
+        Notifications.any_instance.should_receive(:abort_do_not_deliver)
+        mail
+      end
+
+      it "aborts if the notification is already sent" do
+        notification.email_sent_at = Time.now
+        Notifications.any_instance.should_receive(:abort_already_sent)
+        mail
+      end
+
+      it "aborts if the notification there is no recipient" do
+        notification.email = nil
+        Notifications.any_instance.should_receive(:abort_no_recipient)
+        mail
+      end
+
+      it "aborts if the notification if the user is unsubscribed" do
+        Notifications.any_instance.stub(:unsubscribed?).and_return(true)
+        Notifications.any_instance.should_receive(:abort_unsubscribed)
+        mail
+      end
+
+      it "aborts if the notification if the user is not whitelisted" do
+        Notifications.any_instance.stub(:whitelist_excluded?).and_return(true)
+        Notifications.any_instance.should_receive(:abort_whitelist_excluded)
+        mail
+      end
     end
 
     describe "captures" do
@@ -72,11 +97,31 @@ describe Notifications do
         notification.reload.email_text.should match("Hi")
       end
 
-      it "captures the urls"
-      it "sets the email sent at"
+      it "captures the urls" do
+        notification.reload.email_urls.split("\n").index(privacy_url).should_not be_nil
+      end
+
+      it "sets the email sent at" do
+        notification.reload.email_sent_at.should_not be_nil
+      end
     end
 
-    it "appends tracking"
-    it "does not append tracking if the message is marked do not track"
+    describe "tracking" do
+      before(:each) do
+        Notifications.any_instance.stub(:notification).and_return(notification)
+      end
+
+      it "appends tracking" do
+        mail
+        notification.reload.email_text.should_not match(privacy_url)
+        notification.email_text.should include(notification_click_url(notification) + "?r=http%3A%2F%2Fexample.com" + CGI.escape(privacy_path))
+      end
+
+      it "does not append tracking if the message is marked do not track" do
+        notification.do_not_track = true
+        mail
+        notification.reload.email_text.should match(privacy_url)
+      end
+    end
   end
 end

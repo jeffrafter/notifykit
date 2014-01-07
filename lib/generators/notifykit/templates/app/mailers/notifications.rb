@@ -1,6 +1,6 @@
 require 'action_mailer'
 
-class Notifications < AbortableMailer::Base
+class Notifications < ActionMailer::Base
   helper_method :notification, :append_tracking
 
   def notify(notification_id, to=nil)
@@ -34,7 +34,7 @@ class Notifications < AbortableMailer::Base
     notification.email_html = message.html_part.body.to_s
     notification.email_text = message.text_part.body.to_s
     notification.email_sent_at = Time.now
-    notification.email_urls = urls.join("\n")
+    notification.email_urls = urls.uniq.join("\n")
     notification.save
 
     message
@@ -62,7 +62,7 @@ class Notifications < AbortableMailer::Base
       notification.email_not_sent_at = Time.now
       notification.save
     end
-    super(reason)
+    NullMail.new
   end
 
   def abort_cancelled
