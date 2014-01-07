@@ -77,9 +77,9 @@
     a:focus   { color: #000000; text-decoration: underline;}
     a:hover   { color: #000000; text-decoration: underline;}
 
-    a.button:visited { color: #fff; text-decoration: none;}
-    a.button:focus   { color: #fff; text-decoration: underline;}
-    a.button:hover   { color: #fff; text-decoration: underline;}
+    a.button:visited { color: #ffffff; text-decoration: none;}
+    a.button:focus   { color: #ffffff; text-decoration: underline;}
+    a.button:hover   { color: #ffffff; text-decoration: underline;}
     a.button {
       text-align: center;
       color: #ffffff;
@@ -97,7 +97,7 @@
       line-height: 42px;
       border: none;
       border: 0;
-      background-color: #fe9d89;
+      background-color: #000000;
       -webkit-appearance: none;
       box-sizing: border-box;
       -webkit-border-radius: 3px;
@@ -150,7 +150,7 @@
                         <tr>
                           <td align="center">
                             <a href="<%= append_tracking(root_url) %>">
-                              <%= notification_company_name %>
+                              <%= notification_company_logo %>
                             </a>
                           </td>
                         </tr>
@@ -206,7 +206,7 @@
                     <td class="unsubscribe" align="center" style="text-align:center;font-size:11px;color:#999999">
                       <% unless notification.transactional? -%><a href="<%= notification_unsubscribe_url(notification) %>">Unsubscribe</a><br><% end -%>
                       <a href="<%= append_tracking(privacy_url) %>">Privacy</a> and <a href="<%= append_tracking(terms_url) %>">Terms of service</a>.
-                      <% unless notification.do_not_track? -%><br><img border="0" height="1" width="1" src="<%= notification_read_url(notification, format: '.gif') %>"/><% end -%>
+                      <% unless notification.do_not_track? -%><br><img border="0" height="1" width="1" src="<%= notification_read_url(notification, format: 'gif') %>"/><% end -%>
                     </td>
                   </tr>
                 </table>

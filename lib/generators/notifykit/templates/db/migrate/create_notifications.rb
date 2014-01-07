@@ -21,6 +21,8 @@ class CreateNotifications < ActiveRecord::Migration
       t.datetime :cancelled_at
       t.datetime :unsubscribed_at
       t.datetime :email_sent_at
+      t.datetime :email_marked_as_spam_at
+      t.datetime :email_returned_at
       t.datetime :email_not_sent_at
       t.string :email_not_sent_reason
       t.string :email

@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-module RequireLogin
-  def require_login
-    redirect_to root_path unless current_user
+<% if options.test_mode? %>
+  module RequireLogin
+    def require_login
+      redirect_to root_path unless current_user
+    end
   end
-end
 
-# Require login is assumed to be a method on your ApplicationController
-# it might have been created by Authkit.
-NotificationsController.send(:include, RequireLogin)
+  NotificationsController.send(:include, RequireLogin)
+<% end %>
 
 describe NotificationsController do
 
@@ -16,6 +16,8 @@ describe NotificationsController do
   let(:notification) { build(:notification, token: "TOKEN", user: user) }
   let(:valid_params) { { token: notification.token } }
 
+  # Require login is assumed to be a method on your ApplicationController
+  # it might have been created by Authkit.
   describe "requires login" do
     before(:each) do
       controller.stub(:notification).and_return(notification)
