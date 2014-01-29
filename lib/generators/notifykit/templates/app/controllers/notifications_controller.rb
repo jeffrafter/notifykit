@@ -1,6 +1,7 @@
 class NotificationsController < ::ApplicationController
-  before_filter :require_login
-  before_filter :require_notification
+  before_filter :require_login, except: [:click, :read, :unsubscribe]
+  before_filter :require_notification, except: [:click, :read, :unsubscribe]
+  before_filter :require_trackable, only: [:click, :read, :unsubscribe]
 
   include NotificationsHelper
 
@@ -22,12 +23,12 @@ class NotificationsController < ::ApplicationController
   end
 
   def click
-    notification.click
+    trackable.click
 
     # To prevent a bare redirect, validate that the redirect url
     # was generated when the email was sent
     target_url = params[:r]
-    target_url = root_url if notification.email_urls.blank? || !notification.email_urls.split("\n").index(target_url)
+    target_url = root_url if trackable.email_urls.blank? || !trackable.email_urls.split("\n").index(target_url)
 
     respond_to do |format|
       format.json { head :no_content }
@@ -36,12 +37,12 @@ class NotificationsController < ::ApplicationController
   end
 
   def read
-    notification.read
+    trackable.read
     respond_with_no_content
   end
 
   def unsubscribe
-    notification.unsubscribe
+    trackable.unsubscribe
 
     # TODO you may want to improve the unsubscribe logic here
     respond_to do |format|
@@ -74,22 +75,32 @@ class NotificationsController < ::ApplicationController
     notification
   end
 
+  def require_trackable
+    trackable
+  end
+
   def notification
     return @notification if defined?(@notification)
     @notification = current_user.notifications.where(token: params[:token]).first || raise(ActiveRecord::RecordNotFound)
   end
 
+  def trackable
+    return @trackable if defined?(@trackable)
+    @trackable = Notification.where(token: params[:token]).first || raise(ActiveRecord::RecordNotFound)
+  end
+
   def respond_with_no_content
     respond_to do |format|
       format.json { head :no_content }
-      format.html {
+      format.html { redirect_to root_url }
+      format.gif {
         send_data Notifykit.tracking_pixel, :filename => 'blank.gif', :type => 'image/gif', :disposition => 'inline'
       }
     end
   end
 
   def append_tracking_params(url)
-    return url if notification.do_not_track
+    return url if trackable.do_not_track
     query = []
     query << "utm_campaign=#{utm_campaign}" unless url =~ /utm_campaign/
     query << "utm_medium=#{utm_medium}" unless url =~ /utm_medium/
@@ -103,7 +114,7 @@ class NotificationsController < ::ApplicationController
   end
 
   def utm_campaign
-    notification.kind
+    trackable.kind
   end
 
   def utm_medium

@@ -25,13 +25,13 @@ describe NotificationsController do
 
     it "redirects the if there is no user" do
       controller.stub(:current_user).and_return(nil)
-      get :read, valid_params
+      get :view, valid_params
       response.should be_redirect
     end
 
     it "returns success if there is a user" do
       controller.stub(:current_user).and_return(user)
-      get :read, valid_params
+      get :view, valid_params
       response.should be_success
     end
   end
@@ -51,14 +51,14 @@ describe NotificationsController do
       expect {
         notification.user = User.create(email: "another@example.com")
         notification.save
-        get :read, valid_params
+        get :view, valid_params
       }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it "returns success if there is a notification" do
       expect {
         notification.save
-        get :read, valid_params
+        get :view, valid_params
         response.should be_success
       }.not_to raise_error
     end
@@ -68,6 +68,7 @@ describe NotificationsController do
     before(:each) do
       controller.stub(:current_user).and_return(user)
       controller.stub(:notification).and_return(notification)
+      controller.stub(:trackable).and_return(notification)
     end
 
     describe "recent" do
@@ -122,7 +123,7 @@ describe NotificationsController do
       it "should mark the notification as read" do
         notification.should_receive(:read)
         get :read, valid_params
-        response.should be_success
+        response.should redirect_to(root_url)
       end
     end
 
@@ -175,7 +176,7 @@ describe NotificationsController do
     before(:each) do
       notification.email_urls = target_url
       controller.stub(:current_user).and_return(user)
-      controller.stub(:notification).and_return(notification)
+      controller.stub(:trackable).and_return(notification)
     end
 
     it "should set the utm source" do
