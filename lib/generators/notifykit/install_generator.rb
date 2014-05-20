@@ -62,8 +62,8 @@ module Notifykit
         route "get    '/terms', to: 'terms#index', as: :terms"
       end
 
-      # Adjust the user
-      inject_into_class "app/models/user.rb", User, "has_many :notifications\n"
+      # Adjust the user, unless it doesn't exist
+      inject_into_class "app/models/user.rb", User, "has_many :notifications\n" rescue nil
 
       # Technically, we aren't inserting this at the end of the class, but the end of the RSpec::Configure
       insert_at_end_of_class "spec/spec_helper.rb", "spec/spec_helper.rb"
@@ -86,14 +86,14 @@ module Notifykit
       source = File.expand_path(find_in_source_paths(source.to_s))
       context = instance_eval('binding')
       content = ERB.new(::File.binread(source), nil, '-', '@output_buffer').result(context)
-      insert_into_file filename, "#{content}\n", before: /\z/
+      insert_into_file filename, "#{content}\n", before: /\z/ rescue nil
     end
 
     def insert_at_end_of_class(filename, source)
       source = File.expand_path(find_in_source_paths(source.to_s))
       context = instance_eval('binding')
       content = ERB.new(::File.binread(source), nil, '-', '@output_buffer').result(context)
-      insert_into_file filename, "#{content}\n", before: /end\n*\z/
+      insert_into_file filename, "#{content}\n", before: /end\n*\z/ rescue nil
     end
 
     def generate_migration(filename)

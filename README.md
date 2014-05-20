@@ -37,7 +37,7 @@ emailed it is updated with the rendered text and HTML. Any interaction with
 the notification will create additional database operations.
 
 Even with a modest amount of emails (1000/day) the database would grow
-by 10M.day. This can easily overwhelm a small system.
+by 10Mb.day. This can easily overwhelm a small system.
 
 It is possible to change how rendered email messages are stored. For
 instance you could change to a strategy where only the needed data

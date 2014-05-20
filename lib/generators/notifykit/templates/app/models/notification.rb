@@ -60,7 +60,7 @@ class Notification < ActiveRecord::Base
   def set_email
     return if !self.deliver_via_email?
 
-    self.email ||= self.user.email rescue nil
+    self.email ||= self.user.try(:email) rescue nil
   end
 
   # The default size is 16 which is 1/64^16, this is protected by

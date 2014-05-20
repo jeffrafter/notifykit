@@ -48,8 +48,16 @@
       padding:0;
       line-height:26px;
     }
+    /* For targeting in Gmail */
+    div[title='content'] {
+      padding: 0 40px 0 40px;
+    }
     div.content {
       padding: 0 40px 0 40px;
+    }
+    /* For targeting in Gmail */
+    div[title='content'] p {
+      font-size: 16px;
     }
     div.content p {
       font-size: 16px;
@@ -106,6 +114,10 @@
       zoom: 1;
     }
 
+    *, *:before, *:after {
+      -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+    }
+
     @media only screen and (max-width: 480px) {
       body, #body_style {
         font-size: 24px !important;
@@ -126,7 +138,7 @@
 </head>
 <body style="background:#F7F7F7; color:#7F7F7F; font-size:14px" alink="#000000" link="#000000" bgcolor="#F7F7F7" text="#7F7F7F">
   <div id="body_style">
-    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#F7F7F7">
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#dfdfdf">
       <tr>
         <td style="padding:0px 20px 20px 20px;">
           <table class="table" width="600" cellspacing="0" cellpadding="0" border="0" align="center">
@@ -141,6 +153,8 @@
                 </table>
               </td>
             </tr>
+          </table>
+          <table class="table" width="600" cellspacing="0" cellpadding="0" border="0" align="center">
             <tr>
               <td>
                 <table width="100%" cellspacing="0" cellpadding="0" border="0">
@@ -149,9 +163,11 @@
                       <table cellspacing="0" cellpadding="0" border="0" align="center">
                         <tr>
                           <td align="center">
-                            <a href="<%= append_tracking(root_url) %>">
-                              <%= notification_company_logo %>
-                            </a>
+                            <div style="padding: 16px">
+                              <a href="<%= append_tracking(root_url) %>">
+                                <%= notification_company_logo %>
+                              </a>
+                            </div>
                           </td>
                         </tr>
                       </table>
@@ -160,21 +176,27 @@
                 </table>
               </td>
             </tr>
+          </table>
+          <table class="table" width="600" cellspacing="0" cellpadding="0" border="0" align="center">
             <tr>
               <td class="bar" width="100%" height="0" style="border-bottom:4px solid #666666;">
               </td>
             </tr>
+          </table>
+          <table class="table" width="600" cellspacing="0" cellpadding="0" border="0" align="center">
             <tr>
               <td>
                 <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF">
                   <tr>
-                    <td style="border: 1px solid #CCCCCC; border-top: none; border-bottom: none; padding: 40px 0px;" class="wrapper_td">
+                    <td style="border: 1px solid #CCCCCC; border-top: none; border-bottom: none; padding: 40px 40px;" class="wrapper_td">
                       <%= render partial: notification.kind %>
                     </td>
                   </tr>
                 </table>
               </td>
             </tr>
+          </table>
+          <table class="table" width="600" cellspacing="0" cellpadding="0" border="0" align="center">
             <tr>
               <td style="border:1px solid #CCCCCC;">
                 <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF" align="center">
@@ -193,6 +215,8 @@
                 </table>
               </td>
             </tr>
+          </table>
+          <table class="table" width="600" cellspacing="0" cellpadding="0" border="0" align="center">
             <tr>
               <td align="center">
                 <table class="footer2" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
@@ -202,6 +226,8 @@
                       <%= notification_company_address %>
                     </td>
                   </tr>
+               </table>
+                <table class="footer2" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                   <tr>
                     <td class="unsubscribe" align="center" style="text-align:center;font-size:11px;color:#999999">
                       <% unless notification.transactional? -%><a href="<%= notification_unsubscribe_url(notification) %>">Unsubscribe</a><br><% end -%>
@@ -218,4 +244,4 @@
     </table>
   </div>
 </body>
-</html>
+
