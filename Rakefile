@@ -33,14 +33,15 @@ namespace :generator do
 
     FileUtils.mkdir_p("spec/tmp")
 
-    system "cd spec/tmp && rails new sample"
+    system "cd spec/tmp && rails new sample --skip-spring"
 
     # bundle
     gem_root = File.expand_path(File.dirname(__FILE__))
+    system "echo \"gem 'factory_girl_rails'\" >> spec/tmp/sample/Gemfile"
     system "echo \"gem 'rspec-rails'\" >> spec/tmp/sample/Gemfile"
     system "echo \"gem '#{gem_name}', :path => '#{gem_root}'\" >> spec/tmp/sample/Gemfile"
     system "cd spec/tmp/sample && bundle install"
-    system "cd spec/tmp/sample && rails g rspec:install"
+    system "cd spec/tmp/sample && rails g rspec:install --verbose"
 
     # Open up the root route for specs
     # Make a thing and a user
@@ -59,7 +60,8 @@ namespace :generator do
 
   desc "Run the #{gem_name} generator"
   task gem_name do
-    system "cd spec/tmp/sample && rails g #{gem_name}:install --force --test_mode && rake db:migrate db:test:prepare"
+    system "cd spec/tmp/sample && rails g #{gem_name}:install --force --test_mode && rake db:migrate"
+    system "cd spec/tmp/sample && bin/rake db:migrate RAILS_ENV=test"
   end
 
 end

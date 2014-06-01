@@ -1,7 +1,7 @@
 class NotificationsController < ::ApplicationController
-  before_filter :require_login, except: [:click, :read, :unsubscribe]
-  before_filter :require_notification, except: [:click, :read, :unsubscribe]
-  before_filter :require_trackable, only: [:click, :read, :unsubscribe]
+  before_filter :require_login, except: [:click, :read, :view, :unsubscribe]
+  before_filter :require_notification, except: [:click, :read, :view, :unsubscribe]
+  before_filter :require_trackable, only: [:click, :read, :view, :unsubscribe]
 
   include NotificationsHelper
 
@@ -17,8 +17,8 @@ class NotificationsController < ::ApplicationController
 
   def view
     respond_to do |format|
-      format.html { render text: notification.email_html }
-      format.text { render text: notification.email_text }
+      format.html { render text: trackable.email_html }
+      format.text { render text: trackable.email_text }
     end
   end
 
@@ -47,7 +47,7 @@ class NotificationsController < ::ApplicationController
     # TODO you may want to improve the unsubscribe logic here
     respond_to do |format|
       format.json { head :no_content }
-      format.html { redirect_to root_url }
+      format.html { redirect_to root_path }
     end
   end
 
@@ -56,7 +56,7 @@ class NotificationsController < ::ApplicationController
 
     respond_to do |format|
       format.json { head :no_content }
-      format.html { redirect_to root_url }
+      format.html { redirect_to root_path }
     end
   end
 

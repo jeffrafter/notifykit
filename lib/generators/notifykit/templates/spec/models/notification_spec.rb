@@ -142,11 +142,10 @@ describe Notification do
 
   describe "subject" do
     it "has a subject" do
-      Thing.create
-      thing = Thing.first
-      notification.subject_type = "Thing"
-      notification.subject_id = thing.id
-      notification.subject.id.should == thing.id
+      subject_user = create(:user)
+      notification.subject_type = "User"
+      notification.subject_id = subject_user.id
+      notification.subject.id.should == subject_user.id
     end
   end
 

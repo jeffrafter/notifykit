@@ -118,6 +118,8 @@ dependency (you would also need to change the `CreateNotifications` migration,
 the notification lookup in `NotificationsController` and the `set_email`
 method in the `Notification` model).
 
+It is possible that when working with the `user.rb` the generator will not correctly insert the `has_many :notifications`. Please verify this.
+
 Notifykit also makes some assumptions about your routes. It assumes you have
 the following routes:
 

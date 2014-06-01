@@ -1,18 +1,18 @@
 require 'spec_helper'
 
 <% if options.test_mode? %>
-  module RequireLogin
-    def require_login
-      redirect_to root_path unless current_user
-    end
+module RequireLogin
+  def require_login
+    redirect_to root_path unless current_user
   end
+end
 
-  NotificationsController.send(:include, RequireLogin)
+NotificationsController.send(:include, RequireLogin)
 <% end %>
 
 describe NotificationsController do
 
-  let(:user) { User.create(email: "test@example.com"); User.first }
+  let(:user) { create(:user, email: "test@example.com") }
   let(:notification) { build(:notification, token: "TOKEN", user: user) }
   let(:valid_params) { { token: notification.token } }
 
@@ -25,14 +25,14 @@ describe NotificationsController do
 
     it "redirects the if there is no user" do
       controller.stub(:current_user).and_return(nil)
-      get :view, valid_params
+      post :ignore, valid_params
       response.should be_redirect
     end
 
     it "returns success if there is a user" do
       controller.stub(:current_user).and_return(user)
-      get :view, valid_params
-      response.should be_success
+      post :ignore, valid_params
+      response.should be_redirect
     end
   end
 
@@ -49,9 +49,9 @@ describe NotificationsController do
 
     it "doesn't find a notification belonging to another user" do
       expect {
-        notification.user = User.create(email: "another@example.com")
+        notification.user = create(:user, email: "another@example.com")
         notification.save
-        get :view, valid_params
+        post :ignore, valid_params
       }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
