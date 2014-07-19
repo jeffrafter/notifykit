@@ -69,6 +69,7 @@ More information is available in [FEATURES](FEATURES.md).
 * Unsubscribe support
 * White-list support for non-production environments
 * CANSPAM compliance
+* Message templates
 
 ## Installation
 
@@ -152,6 +153,16 @@ the `NotificationsController` in:
 * `utm_source`
 
 You can just use your company name here or leave it blank.
+
+## Message templates
+
+Notifykit offers basic support for message templates. To install them:
+
+    rails g notifykit:messages
+    
+This will give you a `Message` model and simplistic views. These work great for newsletters and mass communications. Generally you would create a `Message` record with `subject`, `from`, `html_body` and `text_body` and then call `deliver_to_all`.
+
+Message templates support [Github::Markup](https://github.com/github/markup) and will soon support Mustache templating when rendering.
 
 ## Handling unsubscribes and whitelisting
 

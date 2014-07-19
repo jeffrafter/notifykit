@@ -7,7 +7,8 @@ class NotificationsMailer < ActionMailer::Base
 
   def notify(notification_id, to=nil)
     # Ensure that the notification exists
-    self.notification(notification_id)
+    @notification = Notification.find(notification_id) if notification_id.present?
+    @notification || raise(ActiveRecord::RecordNotFound)
 
     to = notification.email if to.blank?
 
@@ -25,10 +26,11 @@ class NotificationsMailer < ActionMailer::Base
       subject: notification.email_subject
     }
     options[:reply_to] = notification.email_reply_to if notification.email_reply_to.present?
+    options[:bcc] = notification.email_bcc if notification.email_bcc.present?
 
     message = mail(options) do |format|
-      format.html
-      format.text
+      format.html { render layout: use_default_layout }
+      format.text { render layout: use_default_layout }
     end
 
     # Storing the rendered template might be a bit aggressive if you are
@@ -44,10 +46,8 @@ class NotificationsMailer < ActionMailer::Base
 
   protected
 
-  def notification(notification_id=nil)
+  def notification
     return @notification if defined?(@notification)
-    @notification = Notification.find(notification_id) if notification_id.present?
-    @notification || raise(ActiveRecord::RecordNotFound)
   end
 
   def unsubscribed?(to)
@@ -100,5 +100,9 @@ class NotificationsMailer < ActionMailer::Base
 
   def urls
     @urls ||= []
+  end
+
+  def use_default_layout
+    return false unless notification.use_default_layout?
   end
 end

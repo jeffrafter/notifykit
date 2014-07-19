@@ -28,10 +28,12 @@ class CreateNotifications < ActiveRecord::Migration
       t.string :email
       t.string :email_reply_to
       t.string :email_from
+      t.string :email_bcc
       t.string :email_subject
       t.text :email_urls
       t.text :email_text
       t.text :email_html
+      t.boolean :use_default_layout, default: true
       t.integer :click_count, default: 0
       t.integer :read_count, default: 0
       t.text :data

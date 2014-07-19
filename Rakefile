@@ -46,7 +46,7 @@ namespace :generator do
     # Open up the root route for specs
     # Make a thing and a user
     system "cd spec/tmp/sample && rails g scaffold thing name:string mood:string"
-    system "cd spec/tmp/sample && rails g scaffold user display_name:string first_name:string email:string"
+    system "cd spec/tmp/sample && rails g scaffold user full_name:string first_name:string last_name:string email:string"
   end
 
   # This task is not used unless you need to test the generator with an alternate database
@@ -61,6 +61,7 @@ namespace :generator do
   desc "Run the #{gem_name} generator"
   task gem_name do
     system "cd spec/tmp/sample && rails g #{gem_name}:install --force --test_mode && rake db:migrate"
+    system "cd spec/tmp/sample && rails g #{gem_name}:messages --force --test_mode && rake db:migrate"
     system "cd spec/tmp/sample && bin/rake db:migrate RAILS_ENV=test"
   end
 

@@ -5,6 +5,7 @@ class Notification < ActiveRecord::Base
   scope :recent, -> { where('read_at IS NULL AND ignored_at IS NULL AND cancelled_at IS NULL').order('id DESC').limit(3) }
 
   before_validation :set_email
+  before_validation :set_email_from
   before_validation :set_token
 
   validates :email, presence: true, if: :deliver_via_email?
@@ -61,6 +62,12 @@ class Notification < ActiveRecord::Base
     return if !self.deliver_via_email?
 
     self.email ||= self.user.try(:email) rescue nil
+  end
+
+  def set_email_from
+    return if !self.deliver_via_email?
+
+    self.email_from ||= ENV['EMAIL_FROM']
   end
 
   # The default size is 16 which is 1/64^16, this is protected by

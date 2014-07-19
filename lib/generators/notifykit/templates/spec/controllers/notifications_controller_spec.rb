@@ -1,3 +1,4 @@
+# You can replace this with rails_helper for RSpec 3.0
 require 'spec_helper'
 
 <% if options.test_mode? %>
@@ -10,9 +11,17 @@ end
 NotificationsController.send(:include, RequireLogin)
 <% end %>
 
-describe NotificationsController do
+RSpec.describe NotificationsController, type: :controller do
 
-  let(:user) { create(:user, email: "test@example.com") }
+  def login(user)
+    allow(controller).to receive(:current_user).and_return(user)
+  end
+
+  def logout
+    allow(controller).to receive(:current_user).and_return(nil)
+  end
+
+  let(:user) { create(:user) }
   let(:notification) { build(:notification, token: "TOKEN", user: user) }
   let(:valid_params) { { token: notification.token } }
 
@@ -20,25 +29,25 @@ describe NotificationsController do
   # it might have been created by Authkit.
   describe "requires login" do
     before(:each) do
-      controller.stub(:notification).and_return(notification)
+      notification.save
     end
 
     it "redirects the if there is no user" do
-      controller.stub(:current_user).and_return(nil)
+      logout
       post :ignore, valid_params
-      response.should be_redirect
+      expect(response).to be_redirect
     end
 
     it "returns success if there is a user" do
-      controller.stub(:current_user).and_return(user)
-      post :ignore, valid_params
-      response.should be_redirect
+      login(user)
+      get :view, valid_params
+      expect(response).to be_success
     end
   end
 
   describe "requires notification" do
     before(:each) do
-      controller.stub(:current_user).and_return(user)
+      login(user)
     end
 
     it "raises a RecordNotFound if it can't find the notification" do
@@ -49,7 +58,7 @@ describe NotificationsController do
 
     it "doesn't find a notification belonging to another user" do
       expect {
-        notification.user = create(:user, email: "another@example.com")
+        notification.user = create(:user)
         notification.save
         post :ignore, valid_params
       }.to raise_error(ActiveRecord::RecordNotFound)
@@ -59,22 +68,22 @@ describe NotificationsController do
       expect {
         notification.save
         get :view, valid_params
-        response.should be_success
+        expect(response).to be_success
       }.not_to raise_error
     end
   end
 
   describe "GET" do
     before(:each) do
-      controller.stub(:current_user).and_return(user)
-      controller.stub(:notification).and_return(notification)
-      controller.stub(:trackable).and_return(notification)
+      login(user)
+      allow(controller).to receive(:notification).and_return(notification)
+      allow(controller).to receive(:trackable).and_return(notification)
     end
 
     describe "recent" do
       it "should find recent notifications via json" do
         get :recent, { format: 'json' }
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
@@ -82,90 +91,90 @@ describe NotificationsController do
       it "should view the html" do
         notification.email_html = "SOME HTML"
         get :view, valid_params
-        response.should be_success
-        response.body.should == "SOME HTML"
+        expect(response).to be_success
+        expect(response.body).to eq "SOME HTML"
       end
 
       it "should view the text" do
         notification.email_text = "SOME TEXT"
         get :view, valid_params.merge(format: 'text')
-        response.should be_success
-        response.body.should == "SOME TEXT"
+        expect(response).to be_success
+        expect(response.body).to eq "SOME TEXT"
       end
     end
 
     describe "click" do
       it "should click and redirect" do
         target_url = "http://example.com"
-        notification.should_receive(:click)
+        expect(notification).to receive(:click)
         notification.email_urls = target_url
         get :click, valid_params.merge(r: target_url)
-        response.should be_redirect
-        response.should redirect_to(target_url+"?utm_campaign=welcome&utm_medium=notification")
+        expect(response).to be_redirect
+        expect(response).to redirect_to(target_url+"?utm_campaign=welcome&utm_medium=notification")
       end
 
       it "should not redirect to unknown urls" do
         target_url = "http://example.com"
-        notification.should_receive(:click)
+        expect(notification).to receive(:click)
         get :click, valid_params.merge(r: target_url)
-        response.should be_redirect
-        response.should redirect_to(root_path+"?utm_campaign=welcome&utm_medium=notification")
+        expect(response).to be_redirect
+        expect(response).to redirect_to(root_path+"?utm_campaign=welcome&utm_medium=notification")
       end
 
       it "should click via json" do
-        notification.should_receive(:click)
+        expect(notification).to receive(:click)
         get :click, valid_params.merge(format: 'json')
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
     describe "read" do
       it "should mark the notification as read" do
-        notification.should_receive(:read)
+        expect(notification).to receive(:read)
         get :read, valid_params
-        response.should redirect_to(root_url)
+        expect(response).to redirect_to(root_url)
       end
     end
 
     describe "unsubscribe" do
       it "should mark the notification as unsubscribed" do
-        notification.should_receive(:unsubscribe)
+        expect(notification).to receive(:unsubscribe)
         get :unsubscribe, valid_params
-        response.should be_redirect
+        expect(response).to be_redirect
       end
 
       it "should mark the notification as unsubscribed via json" do
-        notification.should_receive(:unsubscribe)
+        expect(notification).to receive(:unsubscribe)
         get :unsubscribe, valid_params.merge(format: 'json')
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
     describe "ignore" do
       it "should mark the notification as ignored" do
-        notification.should_receive(:ignore)
+        expect(notification).to receive(:ignore)
         get :ignore, valid_params
-        response.should be_redirect
+        expect(response).to be_redirect
       end
 
       it "should mark the notification as ignored via json" do
-        notification.should_receive(:ignore)
+        expect(notification).to receive(:ignore)
         get :ignore, valid_params.merge(format: 'json')
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
     describe "cancel" do
       it "should mark the notification as cancelled" do
-        notification.should_receive(:cancel)
+        expect(notification).to receive(:cancel)
         get :cancel, valid_params
-        response.should be_redirect
+        expect(response).to be_redirect
       end
 
       it "should mark the notification as cancelled via json" do
-        notification.should_receive(:cancel)
+        expect(notification).to receive(:cancel)
         get :cancel, valid_params.merge(format: 'json')
-        response.should be_success
+        expect(response).to be_success
       end
     end
   end
@@ -174,21 +183,21 @@ describe NotificationsController do
     let(:target_url) { "http://example.com" }
 
     before(:each) do
+      login(user)
       notification.email_urls = target_url
-      controller.stub(:current_user).and_return(user)
-      controller.stub(:trackable).and_return(notification)
+      allow(controller).to receive(:trackable).and_return(notification)
     end
 
     it "should set the utm source" do
-      controller.stub(:utm_source).and_return("SOURCE")
+      allow(controller).to receive(:utm_source).and_return("SOURCE")
       get :click, valid_params.merge(r: target_url)
-      response.should redirect_to(target_url+"?utm_campaign=welcome&utm_medium=notification&utm_source=SOURCE")
+      expect(response).to redirect_to(target_url+"?utm_campaign=welcome&utm_medium=notification&utm_source=SOURCE")
     end
 
     it "should set the utm campaign" do
       notification.kind = "CAMPAIGN"
       get :click, valid_params.merge(r: target_url)
-      response.should redirect_to(target_url+"?utm_campaign=CAMPAIGN&utm_medium=notification")
+      expect(response).to redirect_to(target_url+"?utm_campaign=CAMPAIGN&utm_medium=notification")
     end
   end
 end
