@@ -1,5 +1,5 @@
-# You can replace this with rails_helper for RSpec 3.0
-require 'spec_helper'
+require 'rails_helper'
+
 <% if options.test_mode? %>
 ENV['EMAIL_FROM'] = "YOUR DEFAULT FROM ADDRESS"
 <% end %>

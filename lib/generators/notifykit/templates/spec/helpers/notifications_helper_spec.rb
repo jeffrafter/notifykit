@@ -1,5 +1,4 @@
-# You can replace this with rails_helper for RSpec 3.0
-require 'spec_helper'
+require 'rails_helper'
 
 class HelperWithUser
   include NotificationsHelper

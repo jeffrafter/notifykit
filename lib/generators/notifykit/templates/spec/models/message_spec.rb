@@ -1,4 +1,4 @@
-require "spec_helper"
+require "rails_helper"
 
 describe Message do
   let(:message) { create(:message) }

@@ -28,6 +28,7 @@ module Notifykit
       empty_directory "spec/models"
       empty_directory "spec/controllers"
       empty_directory "spec/mailers"
+      empty_directory "spec/support"
 
       # Fill out some templates (for now, this is just straight copy)
       template "app/models/notification.rb", "app/models/notification.rb"
@@ -65,8 +66,8 @@ module Notifykit
       # Adjust the user, unless it doesn't exist
       inject_into_class "app/models/user.rb", User, "has_many :notifications\n" rescue nil
 
-      # Technically, we aren't inserting this at the end of the class, but the end of the RSpec::Configure
-      insert_at_end_of_class "spec/spec_helper.rb", "spec/spec_helper.rb"
+      # Let there be factory girl
+      copy_file "spec/support/factory_girl.rb", "spec/support/factory_girl.rb"
 
       # RSpec needs to be in the development group to be used in generators
       gem_group :test, :development do

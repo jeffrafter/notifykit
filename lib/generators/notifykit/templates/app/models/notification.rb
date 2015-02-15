@@ -49,7 +49,7 @@ class Notification < ActiveRecord::Base
   def deliver
     return if self.email_sent_at.present? || !self.deliver_via_email?
 
-    NotificationsMailer.notify(self.id).deliver
+    NotificationsMailer.notify(self.id).deliver_now
   end
 
   def to_param

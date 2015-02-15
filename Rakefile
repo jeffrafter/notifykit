@@ -3,17 +3,8 @@ require 'rspec/core/rake_task'
 
 gem_name = :notifykit
 
-RSpec::Core::RakeTask.new(spec: ["generator:cleanup", "generator:prepare", "generator:#{gem_name}"]) do |task|
-  task.pattern = "spec/**/*_spec.rb"
-  task.rspec_opts = "--color --drb"
-  task.verbose = true
-end
-
-namespace :spec do
-  RSpec::Core::RakeTask.new(database: ["generator:cleanup", "generator:prepare", "generator:database", "generator:#{gem_name}"]) do |task|
-    task.pattern = "spec/**/*_spec.rb"
-    task.verbose = true
-  end
+task :spec => ["generator:cleanup", "generator:prepare", "generator:#{gem_name}"] do
+  system "cd spec/tmp/sample; bundle exec rspec --color"
 end
 
 # When using sed to replace in place, don't rely on -i for POSIX compatibility
@@ -34,19 +25,24 @@ namespace :generator do
     FileUtils.mkdir_p("spec/tmp")
 
     system "cd spec/tmp && rails new sample --skip-spring"
+    system "cp .ruby-version spec/tmp/sample"
 
     # bundle
     gem_root = File.expand_path(File.dirname(__FILE__))
-    system "echo \"gem 'factory_girl_rails'\" >> spec/tmp/sample/Gemfile"
     system "echo \"gem 'rspec-rails'\" >> spec/tmp/sample/Gemfile"
+    system "echo \"gem 'factory_girl_rails'\" >> spec/tmp/sample/Gemfile"
     system "echo \"gem '#{gem_name}', :path => '#{gem_root}'\" >> spec/tmp/sample/Gemfile"
-    system "cd spec/tmp/sample && bundle install"
-    system "cd spec/tmp/sample && rails g rspec:install --verbose"
+
+    system "cd spec/tmp/sample; bundle install"
+    system "cd spec/tmp/sample; bin/rails g rspec:install"
+
+    # Make sure rails helper loads the factory girl support file
+    sed("s/# Dir/Dir/", "spec/tmp/sample/spec/rails_helper.rb")
 
     # Open up the root route for specs
     # Make a thing and a user
-    system "cd spec/tmp/sample && rails g scaffold thing name:string mood:string"
-    system "cd spec/tmp/sample && rails g scaffold user full_name:string first_name:string last_name:string email:string"
+    system "cd spec/tmp/sample; bin/rails g scaffold thing name:string mood:string"
+    system "cd spec/tmp/sample; bin/rails g scaffold user full_name:string first_name:string last_name:string email:string"
   end
 
   # This task is not used unless you need to test the generator with an alternate database
@@ -55,14 +51,14 @@ namespace :generator do
   task :database do
     puts "==  Configuring the database =================================================="
     system "cp config/database.yml.example spec/tmp/sample/config/database.yml"
-    system "cd spec/tmp/sample && rake db:migrate:reset"
+    system "cd spec/tmp/sample; bin/rake db:migrate:reset"
   end
 
   desc "Run the #{gem_name} generator"
   task gem_name do
-    system "cd spec/tmp/sample && rails g #{gem_name}:install --force --test_mode && rake db:migrate"
-    system "cd spec/tmp/sample && rails g #{gem_name}:messages --force --test_mode && rake db:migrate"
-    system "cd spec/tmp/sample && bin/rake db:migrate RAILS_ENV=test"
+    system "cd spec/tmp/sample; bin/rails g #{gem_name}:install --force --test_mode && bin/rake db:migrate"
+    system "cd spec/tmp/sample; bin/rails g #{gem_name}:messages --force --test_mode && bin/rake db:migrate"
+    system "cd spec/tmp/sample; bin/rake db:migrate RAILS_ENV=test"
   end
 
 end

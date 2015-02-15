@@ -1,5 +1,4 @@
-# You can replace this with rails_helper for RSpec 3.0
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe NotificationsMailer, type: :mailer do
   describe "notify" do
@@ -42,8 +41,8 @@ RSpec.describe NotificationsMailer, type: :mailer do
 
       it "aborts the delivery" do
         notification.cancelled_at = Time.now
-        expect(mail.class).to eq ActionMailer::Base::NullMail
-        mail.deliver
+        expect(mail.message.class).to eq ActionMailer::Base::NullMail
+        mail.deliver_now
         notification.reload
         expect(notification.email_not_sent_at).to_not be_nil
       end
@@ -51,43 +50,43 @@ RSpec.describe NotificationsMailer, type: :mailer do
       it "aborts the notification if it is cancelled" do
         notification.cancelled_at = Time.now
         expect_any_instance_of(NotificationsMailer).to receive(:abort_cancelled)
-        mail
+        mail.deliver_now
       end
 
       it "aborts the notification if it should not be delivered" do
         notification.deliver_via_email = false
         expect_any_instance_of(NotificationsMailer).to receive(:abort_do_not_deliver)
-        mail
+        mail.deliver_now
       end
 
       it "aborts the notification if has been already sent" do
         notification.email_sent_at = Time.now
         expect_any_instance_of(NotificationsMailer).to receive(:abort_already_sent)
-        mail
+        mail.deliver_now
       end
 
       it "aborts the notification if there is no recipient" do
         notification.email = nil
         expect_any_instance_of(NotificationsMailer).to receive(:abort_no_recipient)
-        mail
+        mail.deliver_now
       end
 
       it "aborts the notification if the user is unsubscribed" do
         allow_any_instance_of(NotificationsMailer).to receive(:unsubscribed?).and_return(true)
         expect_any_instance_of(NotificationsMailer).to receive(:abort_unsubscribed)
-        mail
+        mail.deliver_now
       end
 
       it "aborts if the notification if the user is not whitelisted" do
         allow_any_instance_of(NotificationsMailer).to receive(:whitelist_excluded?).and_return(true)
         expect_any_instance_of(NotificationsMailer).to receive(:abort_whitelist_excluded)
-        mail
+        mail.deliver_now
       end
     end
 
-    describe "captures" do
+    describe "when capturing" do
       before(:each) do
-        mail
+        mail.deliver_now
       end
 
       it "captures the html part" do
@@ -113,14 +112,14 @@ RSpec.describe NotificationsMailer, type: :mailer do
       end
 
       it "appends tracking" do
-        mail
+        mail.deliver_now
         expect(notification.reload.email_text).to_not match(privacy_url)
         expect(notification.email_text).to include(notification_click_url(notification) + "?r=http%3A%2F%2Fexample.com" + CGI.escape(privacy_path))
       end
 
       it "does not append tracking if the message is marked do not track" do
         notification.do_not_track = true
-        mail
+        mail.deliver_now
         expect(notification.reload.email_text).to match(privacy_url)
       end
     end
@@ -128,14 +127,14 @@ RSpec.describe NotificationsMailer, type: :mailer do
     describe "layouts" do
       it "uses the default layout" do
         expect_any_instance_of(NotificationsMailer).to receive(:render).with({layout: nil}).twice
-        mail
+        mail.deliver_now
       end
 
       it "does not use the default layout" do
         notification.use_default_layout = false
         notification.save
         expect_any_instance_of(NotificationsMailer).to receive(:render).with({layout: false}).twice
-        mail
+        mail.deliver_now
       end
     end
   end

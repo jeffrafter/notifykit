@@ -1,10 +1,13 @@
-# You can replace this with rails_helper for RSpec 3.0
-require 'spec_helper'
+require 'rails_helper'
 
 <% if options.test_mode? %>
 module RequireLogin
   def require_login
     redirect_to root_path unless current_user
+  end
+
+  def current_user
+    # stub
   end
 end
 
