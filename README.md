@@ -154,6 +154,8 @@ the `NotificationsController` in:
 
 You can just use your company name here or leave it blank.
 
+There is a default email setup in `notification.rb` that uses `ENV['EMAIL_FROM']`. You can change this value or add the environment variable.
+
 ## Message templates
 
 Notifykit offers basic support for message templates. To install them:
@@ -237,9 +239,11 @@ Sending email in development tends to be a challenge. You can use the
 Gmail SMTP to send actual emails and view them in your mail client of
 choice. In your `config/environments/development.rb` change the following:
 
-    config.action_mailer.default_url_options = { host: "http://localhost:3000" }
+    config.action_mailer.default_url_options = { host: "localhost:3000", protocol: "http" }
     config.action_mailer.raise_delivery_errors = true
     config.action_mailer.perform_deliveries = true
+    config.action_mailer.raise_delivery_errors = true
+    
 
     email_config = YAML::load(File.open("#{Rails.root.to_s}/config/email.yml"))
     config.action_mailer.smtp_settings = email_configRails.env] unless email_config[Rails.env].nil?
@@ -270,6 +274,16 @@ From the terminal run:
 This will start the Mailcatcher daemon. Now any emails sent from development will
 be trapped by Mailcatcher and you can view the results in your browser at
 [http://localhost:1080](http://localhost:1080).
+
+In order for your tests to work you will need to setup the default host in your test environment as well:
+
+    config.action_mailer.default_url_options = { host: "localhost:3000", protocol: "http" }
+
+If you are using `secrets.yml` you could set this up using a host setting per envirnment, then just set the value in `config/application.rb`: 
+
+    # Set the host
+    config.action_mailer.default_url_options = { host: Rails.application.secrets.domain, protocol: Rails.application.secrets.protocol }
+
 
 ## Creating notification templates and kinds
 
