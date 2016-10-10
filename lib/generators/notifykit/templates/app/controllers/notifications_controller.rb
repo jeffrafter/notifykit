@@ -1,7 +1,7 @@
 class NotificationsController < ::ApplicationController
-  before_filter :require_login, except: [:click, :read, :view, :unsubscribe]
-  before_filter :require_notification, except: [:click, :read, :view, :unsubscribe]
-  before_filter :require_trackable, only: [:click, :read, :view, :unsubscribe]
+  before_action :require_login, except: [:click, :read, :view, :unsubscribe]
+  before_action :require_notification, except: [:click, :read, :view, :unsubscribe]
+  before_action :require_trackable, only: [:click, :read, :view, :unsubscribe]
 
   include NotificationsHelper
 
